@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" type="text/css" href="css/clinicR.css" />
+</head>
+<body>
+		<h1 id="importation-de-données-dans-r">Importation de données dans R</h1>
+<p>Fréquemment on reçoit ses données dans un fichier Excel. Plusieurs <em>packages</em> existe qui peuvent lire ce format (<code>gdata</code>, <code>RODBC</code>, <code>XLConnect</code>, <code>xlsx</code>, <code>RExcel</code>) (note: <code>gdata</code> a besoin de <code>Perl</code> pour importer un fichier Excel, ce qui peut ne pas être disponible sur une machine Windows, alors que ce ne serait pas un problème sur Mac ou Linux). Une meilleure manière de transférer ses données est via un fichier texte, .csv par exemple. Pourquoi csv?</p>
+<ul>
+<li>Peut être lu par n'importe quel logiciel passé, présent et probablement futur,</li>
+<li>Pour la compatibilité descendante,</li>
+<li>Pour la compatibilité entre plate-forme (Windows, Mac, Linux),</li>
+<li>Pour la facilité de lecture par un être humain comparativement à d'autres formats tels que XML, HL7, JSON etc.</li>
+</ul>
+<p>Un fichier .csv est donc plus facile à utiliser, plus fiable et plus pérenne qu'un fichier Excel.</p>
+<p>Il faut cependant que le fichier soit dans un certain format pour pouvoir être importé. Le fichier exposé dans l'image suivante comporte-t-il des erreurs?</p>
+<p><img src="img/bad-file.png" width="75%" height="75%"></p>
+<h2 id="importation-dun-fichier-.csv">Importation d'un fichier .csv</h2>
+<p>Les données <a href="health.csv">health</a> vont être utilisées pour démontrer l'utilisation de <code>read.csv()</code>. Ce fichier reprend les lactations de 500 vaches provenant de différents troupeaux, avec leur âge, numéro de lactation, présence de fièvre de lait et/ou de déplacement de caillette. Pour ce faire, on utilise la fonction <code>read.csv()</code> qui va importer ces données tabulaires (un <em>data frame</em> pour <code>R</code>: plusieurs lignes, colonnes et de format mixte). <code>read.csv()</code> fait partie des fonctions <code>read.table()</code> (cf. <code>?read.table</code>) pour importer des données de type mixte. Si les données étaient uniquement numériques, on pourrait utiliser la fonction <code>scan()</code> (pour des matrices). On assigne le jeu de données importé à une variable avec <code>&lt;-</code> (on crée un objet dans <code>R</code>).</p>
+<p>Par défaut, <code>read.csv()</code> utilise la virgule comme séparateur de champs. On peut modifier le séparateur en utilisant l'argument <code>sep=</code> (p.ex. <code>sep=';'</code>). Ceci est important sur des ordinateurs <em>francophones</em> où la virgule représente la décimale (et non le point comme en anglais). Autre solution: <code>read.csv2()</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r">health &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> <span class="st">&quot;health.csv&quot;</span>)
+<span class="kw">head</span>(health)</code></pre>
+<pre><code>     unique age lactation disease presence
+1 K100-P284 6.7         6      mf        0
+2 K100-P284 6.7         6      da        0
+3 K100-P295 6.9         6      mf        0
+4 K100-P295 6.9         6      da        0
+5 K100-P357 5.9         4      mf        0
+6 K100-P357 5.9         4      da        0</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(health)</code></pre>
+<pre><code>&#39;data.frame&#39;:   1000 obs. of  5 variables:
+ $ unique   : Factor w/ 500 levels &quot;K100-P284&quot;,&quot;K100-P295&quot;,..: 1 1 2 2 3 3 4 4 5 5 ...
+ $ age      : num  6.7 6.7 6.9 6.9 5.9 5.9 6.6 6.6 5.4 5.4 ...
+ $ lactation: int  6 6 6 6 4 4 5 5 4 4 ...
+ $ disease  : Factor w/ 2 levels &quot;da&quot;,&quot;mf&quot;: 2 1 2 1 2 1 2 1 2 1 ...
+ $ presence : int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<p>Utilisant <code>str(health)</code>, chaque variable a-t-elle été importée comme vous l'espériez?</p>
+<h2 id="les-différents-arguments">Les différents arguments</h2>
+<ul>
+<li><p><code>header</code>: <code>TRUE</code> par défaut. Si la première ligne de votre fichier n'est pas le nom des variables, mettre <code>header = FALSE</code></p></li>
+<li><p><code>stringsAsFactors</code>: par défaut, <code>R</code> convertit les variables de type caractères en facteurs (cf. <a href="https://dhaine.github.io/2014-11-06-fmv/novice/epi/01-data-structures.html">atelier SWC</a>). C'est peut-être ce que vous recherchiez, ou pas. Par exemple, s'il y a eu une erreur lors de l'identification de la vache K100-P284 et que vous voulez remplacer K100-P284 par K100-P999:</p></li>
+</ul>
+<pre class="sourceCode r"><code class="sourceCode r">health$unique &lt;-<span class="st"> </span><span class="kw">ifelse</span>(health$unique ==<span class="st"> &quot;K100-P284&quot;</span>, <span class="st">&quot;K100-P999&quot;</span>, health$unique)
+<span class="kw">head</span>(health)</code></pre>
+<pre><code>     unique age lactation disease presence
+1 K100-P999 6.7         6      mf        0
+2 K100-P999 6.7         6      da        0
+3         2 6.9         6      mf        0
+4         2 6.9         6      da        0
+5         3 5.9         4      mf        0
+6         3 5.9         4      da        0</code></pre>
+<p>Que s'est-il passé? Maintenant essayons avec <code>stringsAsFactors</code>:</p>
+<pre class="sourceCode r"><code class="sourceCode r">health &lt;-<span class="st"> </span><span class="kw">read.csv</span>(<span class="dt">file =</span> <span class="st">&quot;health.csv&quot;</span>,
+                   <span class="dt">stringsAsFactors =</span> <span class="ot">FALSE</span>)
+<span class="kw">str</span>(health)</code></pre>
+<pre><code>&#39;data.frame&#39;:   1000 obs. of  5 variables:
+ $ unique   : chr  &quot;K100-P284&quot; &quot;K100-P284&quot; &quot;K100-P295&quot; &quot;K100-P295&quot; ...
+ $ age      : num  6.7 6.7 6.9 6.9 5.9 5.9 6.6 6.6 5.4 5.4 ...
+ $ lactation: int  6 6 6 6 4 4 5 5 4 4 ...
+ $ disease  : chr  &quot;mf&quot; &quot;da&quot; &quot;mf&quot; &quot;da&quot; ...
+ $ presence : int  0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">health$unique &lt;-<span class="st"> </span><span class="kw">ifelse</span>(health$unique ==<span class="st"> &quot;K100-P284&quot;</span>, <span class="st">&quot;K100-P999&quot;</span>, health$unique)
+<span class="kw">head</span>(health)</code></pre>
+<pre><code>     unique age lactation disease presence
+1 K100-P999 6.7         6      mf        0
+2 K100-P999 6.7         6      da        0
+3 K100-P295 6.9         6      mf        0
+4 K100-P295 6.9         6      da        0
+5 K100-P357 5.9         4      mf        0
+6 K100-P357 5.9         4      da        0</code></pre>
+<blockquote>
+<p><strong>Rappel:</strong> Les facteurs sont en fait des nombres!</p>
+</blockquote>
+<blockquote>
+<p><strong>Truc:</strong> Il existe une option globale, <code>options(stringsAsFactors = FALSE)</code> pour contrôler ce comprtement de manière générale. Mais changer une option globale peut avoir des conséquences non prévues lorsque combinée avec d'autres codes (de <em>packages</em> ou que vous <em>sourcer</em> dans votre code actuel). Cela vous peut aussi rendre plus difficile la compréhension de votre code. Je ne le recommande donc pas.</p>
+</blockquote>
+<ul>
+<li><p><code>as.is</code>: supprime la conversion en facteur pour un sous-ensemble des variables.</p></li>
+<li><p><code>strip.white</code>: si un <em>blanc</em> a été introduit avant ou après une donnée. On peut dire à <code>R</code> de s'en débarrasser avec <code>strip.white</code>.</p></li>
+</ul>
+<p><strong>Fonctions utiles avec les data frames</strong></p>
+<ul>
+<li><code>head()</code> - pour voir les 6 premières lignes</li>
+<li><code>tail()</code> - pour voir les 6 dernières lignes</li>
+<li><code>dim()</code> - ses dimensions</li>
+<li><code>nrow()</code> - le nombre de lignes</li>
+<li><code>ncol()</code> - le nombre de colonnes</li>
+<li><code>str()</code> - structure de chaque colonne</li>
+<li><code>names()</code> - liste l'attribut <code>names</code> d'un data frame (ou n'importe quel autre object), ce qui donne les noms des colonnes.</li>
+</ul>
+<h2 id="formats-propriétaires-binaires">Formats propriétaires binaires</h2>
+<p>Le <em>package</em> <code>foreign</code> permet d'importer des données en format propriétaire binaire tels que Stata, SAS, SPSS etc. Par exemple:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">install.packages</span>(<span class="st">&quot;foreign&quot;</span>)
+<span class="kw">library</span>(foreign)
+<span class="kw">read.dta</span>(<span class="st">&quot;health.dta&quot;</span>)  <span class="co"># for Stata files</span>
+<span class="kw">read.xport</span>(<span class="st">&quot;health.xpt&quot;</span>)  <span class="co"># for SAS XPORT format</span>
+<span class="kw">read.spss</span>(<span class="st">&quot;health.sav&quot;</span>)  <span class="co"># for SPSS format</span>
+<span class="kw">read.epiinfo</span>(<span class="st">&quot;health.REC&quot;</span>)  <span class="co"># for EpiInfo format (and EpiData)</span>
+<span class="kw">read.mpt</span>(<span class="st">&quot;health.mtp&quot;</span>)  <span class="co"># for Minitab Portable Worksheet</span>
+
+## other solutions for Stata files:
+<span class="kw">library</span>(memisc)
+<span class="kw">Stata.file</span>()
+<span class="kw">library</span>(Hmisc)
+<span class="kw">stata.get</span>()
+## other solution for SPSS files:
+<span class="kw">library</span>(Hmisc)
+<span class="kw">spss.get</span>()</code></pre>
+<p>Remarquez que vous ne pouvez pas importer des fichiers SAS en format <em>permanent</em> (<code>.ssd</code> ou <code>.sas7bdat</code>). Si SAS est installé sur votre système, vous pouvez utiliser <code>read.ssd</code> pour importer ces formats.</p>
+<blockquote>
+<p><strong>Truc:</strong> Si vous n'avez pas SAS et que vous <em>roulez</em> sous Windows, vous pouvez utiliser le SAS System Viewer (<a href="http://support.sas.com/downloads/package.htm?pid=176">téléchargement gratuit</a>) pour ouvrir votre fichier SAS et l'exporter en <code>.csv</code>.</p>
+</blockquote>
+<p>Autres solutions pour les fichiers SAS:</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(SASxport)
+<span class="kw">read.xport</span>(<span class="st">&quot;health.xpt&quot;</span>)
+
+<span class="kw">sas.get</span>()  ## in package Hmisc
+<span class="kw">library</span>(sas7bdat)
+<span class="kw">read.sas7bdat</span>(<span class="st">&quot;health.sas7bdat&quot;</span>)</code></pre>
+<h2 id="importation-de-fichiers-compressés">Importation de fichiers compressés</h2>
+<p>Les fichiers compressés par l'algorithme <em>gzip</em> peuvent être décompressés par la fonction <code>gzfile</code> et ceux par l'algorithme <em>bzip2</em> par la fonction <code>bzfile</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">read.table</span>(<span class="kw">gzfile</span>(<span class="st">&quot;health.gz&quot;</span>))</code></pre>
+<h2 id="connexion-à-une-base-de-données">Connexion à une base de données</h2>
+<p>Il y a plusieurs <em>packages</em> permettant de connecter <code>R</code> à un DBMS (<code>RODBC</code>, <code>RMySQL</code>, <code>RSQLite</code>, <code>ROracle</code> etc.).</p>
+<h2 id="connexion-à-un-tableur">Connexion à un tableur</h2>
+<p>En plus des <em>packages</em> cités plus haut pour Excel, on peut utiliser les suivants pour avoir accès à Google docs ou un fichier <code>.ods</code>.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(RCurl)
+myData &lt;-<span class="st"> </span><span class="kw">getURL</span>(<span class="st">&quot;https://docs.google.com/spreadsheet...&quot;</span>)
+<span class="kw">read.csv</span>(<span class="kw">textConnection</span>(myData))  <span class="co"># reading from Google spreadsheet</span>
+
+## for ODS files:
+<span class="kw">library</span>(gnumeric)
+<span class="kw">library</span>(readODS)
+<span class="kw">library</span>(ROpenOffice)</code></pre>
+<hr />
+<p><strong>Information additionnelle</strong></p>
+<p><a href="http://cran.r-project.org/doc/manuals/r-patched/R-data.pdf">Manuel R</a></p>
+</body>
+</html>
