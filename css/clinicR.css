@@ -43,6 +43,19 @@ div.box {
     background-color: lightgray;
 }
 
+/* Challenge questions. */
+div.challenge {
+    border-style: solid;
+    border-width: thin;
+    border-color: gray;
+}
+
+/* Key points in summary. */
+div.keypoints {}
+
+/* Learning objectives. */
+div.objectives {}
+
 h1 {
 	color : mediumblue;
 }
