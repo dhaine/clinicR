@@ -4,13 +4,10 @@
 <html>
   <head>
     <title>clinicR: {{ page.topic }}</title>
-<!--    {% include header.html %}-->
+    {% include head.html %}
     <meta name="topic" content="{{page.topic}}" />
     <meta name="date" content="{{page.humandate}}" />
     <meta name="date" content="{{page.date}}" />
-    {% if page.redirect %}
-    <meta http-equiv="refresh" content="0; url={{page.redirect}}" />
-    {% endif %}
 </head>
 <body>
   <div class="container">
@@ -45,4 +42,5 @@
     </div>
   </div>
 </body>
+{% include foot.html %}
 </html>
