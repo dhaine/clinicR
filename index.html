@@ -21,30 +21,7 @@ Please use three-letter month names for the 'humandate' field.
   venir. Un <a href="https://github.com/dhaine/clinicR/wiki">wiki</a> est
   également disponible ainsi
   qu'une <a href="http://groups.google.com/group/clinicR">liste de
-  diffusion</a>. L'organisateur est <a href="mailto:denis.haine@umontreal.ca"
-  target="_top">Denis Haine</a>.
+  diffusion</a>. L'organisateur du groupe
+  est <a href="mailto:denis.haine@umontreal.ca" target="_top">Denis Haine</a>.
 </p>
-
-<h2>Prochaine rencontre:</h2>
-<!-- This block displays the the topic of next meeting. -->
-{% if page.topic %}
-<p>
-  <strong>Activité:</strong>
-  {{ page.topic }}
-</p>
-{% endif %}
-<!-- This block displays the instructor's name if available. -->
-{% if page.instructor %}
-<p>
-  <strong>Instructor:</strong>
-  {{page.instructor | join: ', ' %}}
-</p>
-{% endif %}
-<!-- This block displays the meeting place if available. -->
-{% if page.place %}
-<p>
-  <strong>Lieu:</strong>
-  {{ page.place }}
-</p>
-{% endif %}
 
