@@ -32,6 +32,16 @@
 	      {% endif %}
 	    </p>
 	  </div>
+	  <div class="span6">
+	    <p>
+	      <strong>Où?:</strong>
+	      {% if page.place %}
+	      {{page.place}}
+	      {% else %}
+	      à venir.
+	      {% endif %}
+	    </p>
+	  </div>
 	</div>
       </div>
       {{content}}
