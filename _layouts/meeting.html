@@ -5,7 +5,7 @@
   <head>
     <title>clinicR: groupe d'utilisateurs de R à la FMV</title>
     {% include head.html %}
-</head>
+  </head>
 <body>
   <div class="container">
     <div class="span10 offset1">
@@ -14,7 +14,7 @@
       <div class="hero-unit">
 	<div class="row-fluid">
 	  <div class="span10">
-	    <h2>{{page.topic}}</h2>
+	    <h2>Prochaine présentation: {{page.topic}}</h2>
 	  </div>
 	</div>
 	<div class="row-fluid">
@@ -24,11 +24,11 @@
 	  </div>
 	  <div class="span6">
 	    <p>
-	      <strong>Instructor:</strong>
+	      <strong>Par:</strong>
 	      {% if page.instructor %}
 	      {{page.instructor | join: ', ' %}}
 	      {% else %}
-	      to be announced.
+	      à venir.
 	      {% endif %}
 	    </p>
 	  </div>
