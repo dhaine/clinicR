@@ -121,7 +121,8 @@ head(health)
 ## Formats propriétaires binaires
 
 Le *package* `foreign` permet d'importer des données en format propriétaire
-binaire tels que Stata, SAS, SPSS etc. Par exemple:
+binaire tels que Stata, SAS, SPSS etc. Par exemple (fichiers Stata et SAS
+provenant de [VER](http://www.upei.ca/ver/datasets-programs) par Ian Dohoo):
 
 ```{r foreign, eval=FALSE}
 install.packages("foreign")

@@ -40,12 +40,14 @@ pour `R`: plusieurs lignes, colonnes et de format mixte). `read.csv()` fait
 partie des fonctions `read.table()` (cf. `?read.table`) pour importer des
 données de type mixte. Si les données étaient uniquement numériques, on pourrait
 utiliser la fonction `scan()` (pour des matrices). On assigne le jeu de données
-importé à une variable avec `<-` ("on crée un objet dans `R`").
+importé à une variable avec `<-` ("on crée un objet dans `R`"). `read.table()`
+retourne toujours un *data frame*.
 
 Par défaut, `read.csv()` utilise la virgule comme séparateur de champs. On peut
-modifier le séparateur en utilisant l'argument `sep=` (p.ex. `sep=';'`). Ceci
+modifier le séparateur en utilisant l'argument `sep =` (p.ex. `sep = ';'`). Ceci
 est important sur des ordinateurs *francophones* où la virgule représente la
-décimale (et non le point comme en anglais). Autre solution: `read.csv2()`.
+décimale (et non le point comme en anglais). Autres solutions: `read.csv2()` ou
+l'argument `dec = ` pour spécifier un autre séparateur de décimale.
 
 
 <pre class='in'><code>health <- read.csv(file = "health.csv")
@@ -154,6 +156,10 @@ head(health)</code></pre>
 * `strip.white`: si un *blanc* a été introduit avant ou après une donnée. On
   peut dire à `R` de s'en débarrasser avec `strip.white`.
 
+* `na.strings`: les *blancs*, NA, NaN, Inf et -Inf sont considérés comme des
+  valeurs manquantes. L'argument `na.strings` permet de modifier ce
+  comportement.
+  
 **Fonctions utiles avec les data frames**
 
 * `head()` - pour voir les 6 premières lignes
@@ -168,7 +174,8 @@ head(health)</code></pre>
 ## Formats propriétaires binaires
 
 Le *package* `foreign` permet d'importer des données en format propriétaire
-binaire tels que Stata, SAS, SPSS etc. Par exemple:
+binaire tels que Stata, SAS, SPSS etc. Par exemple (fichiers Stata et SAS
+provenant de [VER](http://www.upei.ca/ver/datasets-programs) par Ian Dohoo):
 
 
 <pre class='in'><code>install.packages("foreign")
@@ -237,6 +244,10 @@ health <- read.ods("health.ods", sheet = 1)</code></pre>
 Pour un fichier Google Doc, il est préférable de l'exporter d'abord au format
 `csv`, puis de le transférer dans R. Pour d'autres solutions, voir
 [The Omega Project](http://www.omegahat.org/).
+
+*Note concernant RODBC et Excel:* ne fonctionne que sous Windows et seule la
+version 32-bit de `R` est supportée. De plus il est nécessaire d'avoir le
+*driver* Excel RODBC installé.
 
 ---
 **Information additionnelle**
