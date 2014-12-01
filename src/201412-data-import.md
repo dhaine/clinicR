@@ -1,6 +1,6 @@
 ---
 layout: lesson
-root: ../..
+root: ..
 ---
 
 
@@ -26,7 +26,7 @@ qu'un fichier Excel.
 Il faut cependant que le fichier soit dans un certain format pour pouvoir être
 importé. Le fichier exposé dans l'image suivante comporte-t-il des erreurs?
 
-<img src="img/bad-file.png" width="75%" height="75%">
+<img src="img/bad-file.png" width="75%" height="75%"/>
 
 
 ## Importation d'un fichier .csv
@@ -40,7 +40,7 @@ pour `R`: plusieurs lignes, colonnes et de format mixte). `read.csv()` fait
 partie des fonctions `read.table()` (cf. `?read.table`) pour importer des
 données de type mixte. Si les données étaient uniquement numériques, on pourrait
 utiliser la fonction `scan()` (pour des matrices). On assigne le jeu de données
-importé à une variable avec `<-` (on crée un objet dans `R`).
+importé à une variable avec `<-` ("on crée un objet dans `R`").
 
 Par défaut, `read.csv()` utilise la virgule comme séparateur de champs. On peut
 modifier le séparateur en utilisant l'argument `sep=` (p.ex. `sep=';'`). Ceci
@@ -48,33 +48,33 @@ est important sur des ordinateurs *francophones* où la virgule représente la
 décimale (et non le point comme en anglais). Autre solution: `read.csv2()`.
 
 
-```r
-health <- read.csv(file = "health.csv")
-head(health)
-```
+<pre class='in'><code>health <- read.csv(file = "health.csv")
+head(health)</code></pre>
 
-```
-     unique age lactation disease presence
+
+
+<div class='out'><pre class='out'><code>     unique age lactation disease presence
 1 K100-P284 6.7         6      mf        0
 2 K100-P284 6.7         6      da        0
 3 K100-P295 6.9         6      mf        0
 4 K100-P295 6.9         6      da        0
 5 K100-P357 5.9         4      mf        0
 6 K100-P357 5.9         4      da        0
-```
+</code></pre></div>
 
-```r
-str(health)
-```
 
-```
-'data.frame':	1000 obs. of  5 variables:
+
+<pre class='in'><code>str(health)</code></pre>
+
+
+
+<div class='out'><pre class='out'><code>'data.frame':	1000 obs. of  5 variables:
  $ unique   : Factor w/ 500 levels "K100-P284","K100-P295",..: 1 1 2 2 3 3 4 4 5 5 ...
  $ age      : num  6.7 6.7 6.9 6.9 5.9 5.9 6.6 6.6 5.4 5.4 ...
  $ lactation: int  6 6 6 6 4 4 5 5 4 4 ...
  $ disease  : Factor w/ 2 levels "da","mf": 2 1 2 1 2 1 2 1 2 1 ...
  $ presence : int  0 0 0 0 0 0 0 0 0 0 ...
-```
+</code></pre></div>
 
 Utilisant `str(health)`, chaque variable a-t-elle été importée comme vous
 l'espériez?
@@ -92,62 +92,61 @@ l'espériez?
   K100-P284 par K100-P999:
 
 
-```r
-health$unique <- ifelse(health$unique == "K100-P284", "K100-P999", health$unique)
-head(health)
-```
+<pre class='in'><code>health$unique <- ifelse(health$unique == "K100-P284", "K100-P999", health$unique)
+head(health)</code></pre>
 
-```
-     unique age lactation disease presence
+
+
+<div class='out'><pre class='out'><code>     unique age lactation disease presence
 1 K100-P999 6.7         6      mf        0
 2 K100-P999 6.7         6      da        0
 3         2 6.9         6      mf        0
 4         2 6.9         6      da        0
 5         3 5.9         4      mf        0
 6         3 5.9         4      da        0
-```
+</code></pre></div>
 
 Que s'est-il passé? Maintenant essayons avec `stringsAsFactors`:
 
 
-```r
-health <- read.csv(file = "health.csv",
+<pre class='in'><code>health <- read.csv(file = "health.csv",
                    stringsAsFactors = FALSE)
-str(health)
-```
+str(health)</code></pre>
 
-```
-'data.frame':	1000 obs. of  5 variables:
+
+
+<div class='out'><pre class='out'><code>'data.frame':	1000 obs. of  5 variables:
  $ unique   : chr  "K100-P284" "K100-P284" "K100-P295" "K100-P295" ...
  $ age      : num  6.7 6.7 6.9 6.9 5.9 5.9 6.6 6.6 5.4 5.4 ...
  $ lactation: int  6 6 6 6 4 4 5 5 4 4 ...
  $ disease  : chr  "mf" "da" "mf" "da" ...
  $ presence : int  0 0 0 0 0 0 0 0 0 0 ...
-```
+</code></pre></div>
 
-```r
-health$unique <- ifelse(health$unique == "K100-P284", "K100-P999", health$unique)
-head(health)
-```
 
-```
-     unique age lactation disease presence
+
+<pre class='in'><code>health$unique <- ifelse(health$unique == "K100-P284", "K100-P999", health$unique)
+head(health)</code></pre>
+
+
+
+<div class='out'><pre class='out'><code>     unique age lactation disease presence
 1 K100-P999 6.7         6      mf        0
 2 K100-P999 6.7         6      da        0
 3 K100-P295 6.9         6      mf        0
 4 K100-P295 6.9         6      da        0
 5 K100-P357 5.9         4      mf        0
 6 K100-P357 5.9         4      da        0
-```
+</code></pre></div>
 
 > **Rappel:** Les facteurs sont en fait des nombres!
 
 > **Truc:** Il existe une option globale, `options(stringsAsFactors = FALSE)`
-> pour contrôler ce comprtement de manière générale. Mais changer une option
+> pour contrôler ce comportement de manière générale. Mais changer une option
 > globale peut avoir des conséquences non prévues lorsque combinée avec d'autres
-> codes (de *packages* ou que vous *sourcer* dans votre code actuel). Cela vous
-> peut aussi rendre plus difficile la compréhension de votre code. Je ne le
-> recommande donc pas.
+> codes (provenant de *packages* ou que vous *sourcer* dans votre code
+> actuel). Cela peut aussi vous rendre plus difficile la compréhension de votre
+> code. Je ne le recommande donc pas.
 
 * `as.is`: supprime la conversion en facteur pour un sous-ensemble des
   variables.
@@ -164,7 +163,7 @@ head(health)
 * `ncol()` - le nombre de colonnes
 * `str()` - structure de chaque colonne
 * `names()` - liste l'attribut `names` d'un data frame (ou n'importe quel autre
-  object), ce qui donne les noms des colonnes.
+  objet), ce qui donne les noms des colonnes.
 
 ## Formats propriétaires binaires
 
@@ -172,24 +171,22 @@ Le *package* `foreign` permet d'importer des données en format propriétaire
 binaire tels que Stata, SAS, SPSS etc. Par exemple:
 
 
-```r
-install.packages("foreign")
+<pre class='in'><code>install.packages("foreign")
 library(foreign)
-read.dta("health.dta")  # for Stata files
-read.xport("health.xpt")  # for SAS XPORT format
-read.spss("health.sav")  # for SPSS format
-read.epiinfo("health.REC")  # for EpiInfo format (and EpiData)
-read.mpt("health.mtp")  # for Minitab Portable Worksheet
+read.dta("calf_pneu.dta")  # for Stata files
+read.xport("file.xpt")  # for SAS XPORT format
+read.spss("file.sav")  # for SPSS format
+read.epiinfo("file.REC")  # for EpiInfo format (and EpiData)
+read.mpt("file.mtp")  # for Minitab Portable Worksheet
 
 ## other solutions for Stata files:
 library(memisc)
 Stata.file()
 library(Hmisc)
-stata.get()
+stata.get("calf_pneu.dta")
 ## other solution for SPSS files:
 library(Hmisc)
-spss.get()
-```
+spss.get()</code></pre>
 
 Remarquez que vous ne pouvez pas importer des fichiers SAS en format *permanent*
 (`.ssd` ou `.sas7bdat`). Si SAS est installé sur votre système, vous pouvez
@@ -203,14 +200,11 @@ utiliser `read.ssd` pour importer ces formats.
 Autres solutions pour les fichiers SAS:
 
 
-```r
-library(SASxport)
-read.xport("health.xpt")
-
+<pre class='in'><code>library(SASxport)
+read.xport("file.xpt")
 sas.get()  ## in package Hmisc
 library(sas7bdat)
-read.sas7bdat("health.sas7bdat")
-```
+read.sas7bdat("calf_pneu.sas7bdat")</code></pre>
 
 ## Importation de fichiers compressés
 
@@ -218,9 +212,7 @@ Les fichiers compressés par l'algorithme *gzip* peuvent être décompressés pa
 fonction `gzfile` et ceux par l'algorithme *bzip2* par la fonction `bzfile`.
 
 
-```r
-read.table(gzfile("health.gz"))
-```
+<pre class='in'><code>read.table(gzfile("file.gz"))</code></pre>
 
 ## Connexion à une base de données
 
@@ -230,19 +222,21 @@ Il y a plusieurs *packages* permettant de connecter `R` à un DBMS (`RODBC`,
 ## Connexion à un tableur
 
 En plus des *packages* cités plus haut pour Excel, on peut utiliser les suivants
-pour avoir accès à Google docs ou un fichier `.ods`.
+pour avoir accès à des fichier `.ods`.
 
 
-```r
-library(RCurl)
-myData <- getURL("https://docs.google.com/spreadsheet...")
-read.csv(textConnection(myData))  # reading from Google spreadsheet
+<pre class='in'><code>## for ODS files:
+library(gnumeric)  # sous Linux, gnumeric
+health <- read.gnumeric.sheet(file = "health.ods",
+                              head = TRUE,
+                              sheet.name = "Feuille1")
 
-## for ODS files:
-library(gnumeric)
 library(readODS)
-library(ROpenOffice)
-```
+health <- read.ods("health.ods", sheet = 1)</code></pre>
+
+Pour un fichier Google Doc, il est préférable de l'exporter d'abord au format
+`csv`, puis de le transférer dans R. Pour d'autres solutions, voir
+[The Omega Project](http://www.omegahat.org/).
 
 ---
 **Information additionnelle**

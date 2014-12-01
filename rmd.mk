@@ -16,12 +16,12 @@ all : rmd
 #----------------------------------------------------------------------
 
 # Chunk options for knitr
-CHUNK_OPTS = chunk_options.R
+CHUNK_OPTS = src/chunk_options.R
 
 # R Markdown files.  Add patterns here to convert files stored in
 # other locations.
 RMD_SRC = \
-	$(wildcard ??????-*.Rmd)
+	$(wildcard src/??????-*.Rmd)
 
 # Files converted to Markdown.
 RMD_TX = $(patsubst %.Rmd,%.md,$(RMD_SRC))
