@@ -26,7 +26,7 @@ qu'un fichier Excel.
 Il faut cependant que le fichier soit dans un certain format pour pouvoir être
 importé. Le fichier exposé dans l'image suivante comporte-t-il des erreurs?
 
-<img src="img/bad-file.png" width="75%" height="75%"/>
+<img src="figure/bad-file.png" width="75%" height="75%"/>
 
 
 ## Importation d'un fichier .csv
