@@ -21,7 +21,7 @@ CHUNK_OPTS = src/chunk_options.R
 # R Markdown files.  Add patterns here to convert files stored in
 # other locations.
 RMD_SRC = \
-	$(wildcard src/??????-*.Rmd)
+	$(wildcard src/????????-*.Rmd)
 
 # Files converted to Markdown.
 RMD_TX = $(patsubst %.Rmd,%.md,$(RMD_SRC))
