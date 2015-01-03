@@ -156,3 +156,5 @@ Vous pouvez remplacer les parties correspondantes par les vôtres.
 [`R` markdown](http://rmarkdown.rstudio.com/)
 
 [Markdown et Pandoc](http://enacit1.epfl.ch/markdown-pandoc/)
+
+[`knitr` in a knutshell](http://kbroman.org/knitr_knutshell/)
