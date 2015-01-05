@@ -213,14 +213,15 @@ sas.get()  ## in package Hmisc
 library(sas7bdat)
 read.sas7bdat("calf_pneu.sas7bdat")</code></pre>
 
-> **Note:** Pour créer un fichier Transport SAS, on peut utiliser la procédure
-> PROC COPY:
+> **Note:** Pour créer un fichier Transport SAS (dans SAS), on peut utiliser la
+> procédure PROC COPY:
 
-> `libname sasfile 'C:\path to your folder'
-> libname sasxpt XPORT 'C:\path to your folder\file.xpt'
-> proc copy in = sasfile out = sasxpt;
-> select yourfile;
-> run;`
+
+<pre class='in'><code>libname sasfile 'C:\path to your folder;
+libname sasxpt XPORT 'C:\path to your folder\file.xpt';
+proc copy in = sasfile out = sasxpt;
+select yourfile;
+run;</code></pre>
 
 ## Importation de fichiers compressés
 
