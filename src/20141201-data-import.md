@@ -213,6 +213,15 @@ sas.get()  ## in package Hmisc
 library(sas7bdat)
 read.sas7bdat("calf_pneu.sas7bdat")</code></pre>
 
+> **Note:** Pour créer un fichier Transport SAS, on peut utiliser la procédure
+> PROC COPY:
+
+> `libname sasfile 'C:\path to your folder'
+> libname sasxpt XPORT 'C:\path to your folder\file.xpt'
+> proc copy in = sasfile out = sasxpt;
+> select yourfile;
+> run;`
+
 ## Importation de fichiers compressés
 
 Les fichiers compressés par l'algorithme *gzip* peuvent être décompressés par la
@@ -248,6 +257,37 @@ Pour un fichier Google Doc, il est préférable de l'exporter d'abord au format
 *Note concernant RODBC et Excel:* ne fonctionne que sous Windows et seule la
 version 32-bit de `R` est supportée. De plus il est nécessaire d'avoir le
 *driver* Excel RODBC installé.
+
+## Écrire un nouveau fichier .csv
+
+La fonction `write.csv(...)` permet d'écrire des fichiers .csv et prend
+au minimum deux arguments: les données à sauvegarder et le nom du fichier de
+sortie.
+
+
+<pre class='in'><code>write.csv(health, file = 'new-health.csv')</code></pre>
+
+Si vous ouvrez ce nouveau fichier vous constaterez que les colonnes ont un nom
+mais que la première colonne est faire de numéros.
+
+L'argument `row.names=...` permet d'attribuer un nom aux lignes dans le fichier
+de sortie. Par défaut cet argument est `TRUE` et comme `R` ne sait pas comment
+appeler les lignes, il utilise un numéro. Pour éviter cela, on peut mettre
+l'argument `row.names` comme `FALSE`:
+
+
+<pre class='in'><code>write.csv(health, file= 'new-health.csv', row.names = FALSE)</code></pre>
+
+> **Truc:** Il y a aussi un argument `col.names` qui peut être utiliser pour
+> donne un nom aux colonnes d'un jeu de données qui n'en aurait pas. Si les
+> colonnes de votre jeu de données ont déjà un nom (p.ex. via  `headers = TRUE`
+> lors de l'importation), alors l'argument `col.names` sera ignoré.
+
+Parfois on veut remplacer les `NA` de notre jeu de données lors de
+l'exportation. Pour ce faire on peut utiliser l'argument `na`.
+
+
+<pre class='in'><code>write.csv(health, file = 'new-health.csv', row.names = FALSE, na = '-99')</code></pre>
 
 ---
 **Information additionnelle**
