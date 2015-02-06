@@ -1,10 +1,10 @@
 ---
 layout: meeting
 root: .
-topic: Markdown et R Markdown pour des documents "dynamiques"
-place: local 115, pavillon Dessaulles
-humandate: 8 janvier 2015
-humantime: 12:00 - 13:00
+topic: Utilisation de bases de données avec SQL et interface avec R
+place: local à déterminer
+humandate: 8 janvier 2015 
+humantime: 13:00 - 15:00
 date: 2015-01-08
 instructor: ["Denis Haine"]
 contact: denis.haine@umontreal.ca
@@ -25,7 +25,96 @@ Please use day month year for the 'humandate' field.
   est <a href="mailto:denis.haine@umontreal.ca" target="_top">Denis Haine</a>.
 </p>
 
-<h3>Rencontre #2: Markdown et R Markdown pour des documents "dynamiques"</h2>
+<h3>Rencontre #3: Utilisation de bases de données avec SQL et interface avec R</h3>
+
+<p>
+  <em>SQL est un langage particulier de
+  programmation utilisé avec les bases de données. Nous verrons comment lire,
+  trier et filtrer  des données, calculer de nouvelles valeurs à la volée, gérer
+  les données manquantes, agréger des données, combiner des informations
+  provenant de plusieurs tables, etc grâce au langage SQL. Nous verrons aussi
+  comment accéder à une base de données à partir de R. Pour ce faire nous utiliserons un
+  gestionnaire de bases de données simple
+  appelé <a href="http://www.sqlite.org/">SQLite</a>, et ce à partir d'un plugin du
+  navigateur internet. Vous aurez besoin d'installer ce(s) programme(s):</em>
+</p>
+
+<h3>Windows</h3>
+<p>
+  Télécharger
+      l'<a href="http://files.software-carpentry.org/SWCarpentryInstaller.exe">installateur
+      de Software Carpentry</a>. Si le fichier s'ouvre directement dans votre
+      navigateur, choisir <strong>Fichier&rarr;Sauver la page comme</strong>
+      pour le télécharger sur votre ordinateur. Double-clicker sur le fichier
+      pour l'éxécuter. Nous utiliserons le navigateur
+      internet <a href="https://www.mozilla.org/fr/firefox/new/">Firefox</a>,
+      auquel vous ajouterez l'extension SQLite
+      décrite <a href="#firefox-sqlite">ci-dessous</a>. <strong>Si vous avez
+      participé à
+      l'atelier <a href="https://dhaine.github.io/2014-11-06-fmv/">Software
+      Carpentry</a>, vous n'avez pas besoin d'installer l'installateur.</strong>
+</p>
+
+<h3>Mac OS X</h3>
+<p>
+  <code>sqlite3</code> vient pré-installer sur Mac OS X. Vous utilisez
+      probablement
+      déjà <a href="https://www.mozilla.org/fr/firefox/new/">Firefox</a>, auquel
+      vous ajouterez l'extension SQLite
+      décrite <a href="#firefox-sqlite">ci-dessous</a>.
+</p>
+
+<h3>Linux</h3>
+<p>
+  <code>sqlite3</code> vient pré-installer sur Linux. Vous utilisez
+      déjà <a href="https://www.mozilla.org/fr/firefox/new/">Firefox</a>, auquel
+      vous ajouterez l'extension SQLite
+      décrite <a href="#firefox-sqlite">ci-dessous</a>.
+</p>
+
+<h4 id="firefox-sqlite">Firefox SQLite Plugin</h4>
+<p>
+  Au lieu d'utiliser <code>sqlite3</code> en ligne de commande, nous
+      utiliserons <a href="https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/">cette
+      extension</a> pour Firefox. Pour l'installer:
+</p>
+<ul>
+  <li>
+    Démarrer Firefox.
+  </li>
+  <li>
+    Aller à
+    la <a href="https://addons.mozilla.org/en-US/firefox/addon/sqlite-manager/">page
+    du plugin</a>.
+  </li>
+  <li>
+    Clicker sur le bouton "Add to Firefox".
+  </li>
+  <li>
+    Clicker "Installer maintenant" dans la boîte de dialogue qui apparaît after
+    que le téléchargement soit complété.
+  </li>
+  <li>
+    Redémarrez Firefox quand c'est demandé.
+  </li>
+  <li>
+    Pour vérifier que le plugin est bien installé, sélectionnez "SQLite Manager"
+    à partir du menu "Outils".
+  </li>
+</ul>
+<p>
+  Dans les nouvelles versions de Firefox, la barre de menu n'est pas toujours
+      visible. Pour la faire apparaître, utiliser la touche <code>Alt</code> à
+      côté de la barre d'espacement sur votre clavier, ou consulter
+      la <a href="https://support.mozilla.org/en-US/kb/what-happened-to-the-file-edit-and-view-menus">page
+      de support</a> de Firefox pour de l'aide supplémentaire.
+</p>
+
+<p>
+  Cet atelier est basé sur le programme de <a href="http://datacarpentry.org/">
+  Data Carpentry</a>.
+
+<h3>Rencontre #2: Markdown et R Markdown pour des documents "dynamiques"</h3>
 
 <p>
   <em>R Markdown est un format qui facilite la création de rapports
@@ -35,7 +124,7 @@ Please use day month year for the 'humandate' field.
   Syllabus <a href="src/20150108-rmarkdown.html">ici</a>.
 </p>
 
-<h3>Rencontre #1: Importation de données dans R</h2>
+<h3>Rencontre #1: Importation de données dans R</h3>
 
 <p>
   <em>Comment importer un jeu de données en format .csv, Stata, SAS etc. À quoi
