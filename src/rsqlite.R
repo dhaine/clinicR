@@ -1,5 +1,5 @@
 library(RSQLite)
-# load the drive
+# load the driver
 drv <- dbDriver("SQLite")
 
 con <- dbConnect(drv, "portal_mammals.sqlite")
