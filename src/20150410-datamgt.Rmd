@@ -129,7 +129,3 @@ summary(subset(health, subset = disease == "da", select = age))
 summary(health %>% filter(disease == "da") %>% select(age))
 ```
 
----
-**Information additionnelle**
-
-[Manuel R](http://cran.r-project.org/doc/manuals/r-patched/R-data.pdf)
