@@ -1,0 +1,88 @@
+<h1 id="gestion-de-données-dans-r-i">Gestion de données dans R (I)</h1>
+<h2 id="types-et-structures-de-données">Types et structures de données</h2>
+<p>Contrairement à d'autres logiciels statistiques, <code>R</code> utilisent plusieurs structures de données telles que les vecteurs, les listes, les matrices, les facteurs, les <code>data frames</code> et les <code>arrays</code>. Il est important de les comprendre car ce sont des objets que vous créez et manipulez régulièrement dans <code>R</code>. La <a href="https://dhaine.github.io/2014-11-06-fmv/novice/epi/01-data-structures.html">leçon</a> de l'atelier Sotware Carpentry du GREZOSP sert de référence ici.</p>
+<h2 id="sélection-de-variables">Sélection de variables</h2>
+<pre class='in'><code>health <- read.csv(file = "health.csv")</code></pre>
+
+<p>Si on ne spécifie rien à <code>R</code>, toutes les variables (colonnes) seront sélectionnées.</p>
+<pre class='in'><code>summary(health)</code></pre>
+
+
+
+<div class="out">
+<pre class='out'><code>       unique         age           lactation    disease     presence   
+ K100-P284:  2   Min.   : 1.900   Min.   :1.00   da:500   Min.   :0.00  
+ K100-P295:  2   1st Qu.: 2.400   1st Qu.:1.00   mf:500   1st Qu.:0.00  
+ K100-P357:  2   Median : 3.600   Median :2.00            Median :0.00  
+ K100-P362:  2   Mean   : 4.032   Mean   :2.63            Mean   :0.03  
+ K100-P406:  2   3rd Qu.: 5.025   3rd Qu.:3.00            3rd Qu.:0.00  
+ K100-P416:  2   Max.   :10.400   Max.   :9.00            Max.   :1.00  
+ (Other)  :988                                                          
+</code></pre>
+</div>
+<p>Les colonnes (comme les lignes) peuvent aussi être référencées par leur position (index) indiquée entre crochets: <code>health[lignes, colonnes]</code>. Un index négatif permet d'exclure une colonne.</p>
+<pre class='in'><code>summary(health[, 2])
+summary(health[, c(2, 3, 5)])
+summary(health[, c(2:5)])
+summary(health[, -1])
+summary(health[, -c(1, 4)])</code></pre>
+
+<p>Une colonne peut aussi être sélectionnée par son nom.</p>
+<pre class='in'><code>summary(health[, "age"])</code></pre>
+
+<p>On peut aussi utiliser la notation <code>$</code>.</p>
+<pre class='in'><code>summary(health$age)</code></pre>
+
+<p>Pour éviter d'écrire tout le temps le nom du <code>data frame</code>, on peut utiliser la fonction <code>attach</code>, et ensuite ne plus référer que le nom de la variable. Ou utiliser <code>with</code> qui combine <code>attach</code> et <code>detach</code>.</p>
+<pre class='in'><code>attach(health)
+summary(age)
+detach(health)
+
+with(health, summary(age))</code></pre>
+
+<p>Enfin on peut utiliser la fonction <code>subset</code>.</p>
+<pre class='in'><code>summary(subset(health, select = c(age, lactation)))</code></pre>
+
+<p>Dernière manière: via le <em>package</em> <a href="https://github.com/hadley/dplyr"><code>dplyr</code></a>.</p>
+<pre class='in'><code>library(dplyr)
+summary(select(health, age, lactation))</code></pre>
+
+<h2 id="sélection-dobservations">Sélection d'observations</h2>
+<p>La sélection d'observation (lignes) se fait de la même manière que pour les colonnes.</p>
+<p>Si on ne spécifie rien, toutes les lignes seront sélectionnées.</p>
+<pre class='in'><code>summary(health)</code></pre>
+
+
+
+<div class="out">
+<pre class='out'><code>       unique         age           lactation    disease     presence   
+ K100-P284:  2   Min.   : 1.900   Min.   :1.00   da:500   Min.   :0.00  
+ K100-P295:  2   1st Qu.: 2.400   1st Qu.:1.00   mf:500   1st Qu.:0.00  
+ K100-P357:  2   Median : 3.600   Median :2.00            Median :0.00  
+ K100-P362:  2   Mean   : 4.032   Mean   :2.63            Mean   :0.03  
+ K100-P406:  2   3rd Qu.: 5.025   3rd Qu.:3.00            3rd Qu.:0.00  
+ K100-P416:  2   Max.   :10.400   Max.   :9.00            Max.   :1.00  
+ (Other)  :988                                                          
+</code></pre>
+</div>
+<p>Les lignes peuvent être référencées par leur position (index) indiquée entre crochets: <code>health[lignes, colonnes]</code>. Un index négatif permet d'exclure une ligne.</p>
+<pre class='in'><code>summary(health[1:10, ])</code></pre>
+
+<p>On peut utiliser l'information d'une colonne pour sélectionner certaines lignes.</p>
+<pre class='in'><code>summary(health[health$lactation == 2, ])</code></pre>
+
+<p>Enfin on peut utiliser la fonction <code>subset</code>.</p>
+<pre class='in'><code>summary(subset(health, subset = lactation == 2))</code></pre>
+
+<p>Dernière manière avec <code>dplyr</code>:</p>
+<pre class='in'><code>summary(filter(health, lactation == 2))
+summary(filter(health, lactation == 2, disease == "da"))
+summary(filter(health, lactation == 2 | lactation == 4, disease == "da"))</code></pre>
+
+<p>On peut combiner la sélection des lignes et des colonnes.</p>
+<pre class='in'><code>summary(health[1:10, 2:3])
+summary(subset(health, subset = disease == "da", select = age))
+summary(health %>% filter(disease == "da") %>% select(age))</code></pre>
+
+
+
