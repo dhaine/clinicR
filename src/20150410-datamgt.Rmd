@@ -1,0 +1,135 @@
+---
+layout: lesson
+root: ..
+---
+
+```{r, include = FALSE}
+source("chunk_options.R")
+```
+
+# Gestion de données dans R (I)
+
+## Types et structures de données
+
+Contrairement à d'autres logiciels statistiques, `R` utilisent plusieurs
+structures de données telles que les vecteurs, les listes, les matrices, les
+facteurs, les `data frames` et les `arrays`.
+Il est important de les comprendre car ce sont des objets que vous créez et
+manipulez régulièrement dans `R`.
+La
+[leçon](https://dhaine.github.io/2014-11-06-fmv/novice/epi/01-data-structures.html)
+de l'atelier Sotware Carpentry du GREZOSP sert de référence ici.
+
+## Sélection de variables
+
+```{r import-health}
+health <- read.csv(file = "health.csv")
+```
+
+Si on ne spécifie rien à `R`, toutes les variables (colonnes) seront
+sélectionnées.
+
+```{r var-selectall}
+summary(health)
+```
+
+Les colonnes (comme les lignes) peuvent aussi être référencées par leur position
+(index) indiquée entre crochets: `health[lignes, colonnes]`.
+Un index négatif permet d'exclure une colonne.
+
+```{r var-selectindex, eval=FALSE}
+summary(health[, 2])
+summary(health[, c(2, 3, 5)])
+summary(health[, c(2:5)])
+summary(health[, -1])
+summary(health[, -c(1, 4)])
+```
+
+Une colonne peut aussi être sélectionnée par son nom.
+
+```{r var-selectname, eval=FALSE}
+summary(health[, "age"])
+```
+
+On peut aussi utiliser la notation `$`.
+
+```{r var-selectdollar, eval=FALSE}
+summary(health$age)
+```
+
+Pour éviter d'écrire tout le temps le nom du `data frame`, on peut utiliser la
+fonction `attach`, et ensuite ne plus référer que le nom de la variable.
+Ou utiliser `with` qui combine `attach` et `detach`.
+
+```{r var-selectattach, eval=FALSE}
+attach(health)
+summary(age)
+detach(health)
+
+with(health, summary(age))
+```
+
+Enfin on peut utiliser la fonction `subset`.
+
+```{r var-selectsubset, eval=FALSE}
+summary(subset(health, select = c(age, lactation)))
+```
+
+Dernière manière: via le *package* [`dplyr`](https://github.com/hadley/dplyr).
+
+```{r var-selectdplyr, eval=FALSE}
+library(dplyr)
+summary(select(health, age, lactation))
+```
+
+## Sélection d'observations
+
+La sélection d'observation (lignes) se fait de la même manière que pour les
+colonnes.
+
+Si on ne spécifie rien, toutes les lignes seront sélectionnées.
+
+```{r row-selectall}
+summary(health)
+```
+
+Les lignes peuvent être référencées par leur position (index) indiquée entre
+crochets: `health[lignes, colonnes]`. 
+Un index négatif permet d'exclure une ligne.
+
+```{r row-selectindex, eval=FALSE}
+summary(health[1:10, ])
+```
+
+On peut utiliser l'information d'une colonne pour sélectionner certaines lignes.
+
+```{r row-selectname, eval=FALSE}
+summary(health[health$lactation == 2, ])
+```
+
+Enfin on peut utiliser la fonction `subset`.
+
+```{r row-selectsubset, eval=FALSE}
+summary(subset(health, subset = lactation == 2))
+```
+
+Dernière manière avec `dplyr`:
+
+```{r row-selectdplyr, eval=FALSE}
+summary(filter(health, lactation == 2))
+summary(filter(health, lactation == 2, disease == "da"))
+summary(filter(health, lactation == 2 | lactation == 4, disease == "da"))
+```
+
+On peut combiner la sélection des lignes et des colonnes.
+
+```{r select, eval=FALSE}
+summary(health[1:10, 2:3])
+summary(subset(health, subset = disease == "da", select = age))
+summary(health %>% filter(disease == "da") %>% select(age))
+```
+
+---
+**Information additionnelle**
+
+[Manuel R](http://cran.r-project.org/doc/manuals/r-patched/R-data.pdf)
