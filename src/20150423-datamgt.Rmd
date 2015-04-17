@@ -1,0 +1,97 @@
+---
+layout: lesson
+root: ..
+---
+
+```{r, include = FALSE}
+source("chunk_options.R")
+```
+
+# Gestion de données dans R (II) - Opérations sur les variables et observations
+
+## Transformation de variables
+
+Contrairement à d'autres logiciels statistiques, `R` peut transformer des
+données et les analyser en même temps.
+
+```{r import-health}
+library(gapminder)
+str(gapminder)
+head(gapminder)
+summary(gapminder$pop / 10^6)
+```
+
+Les différentes opérations disponibles dans `R` sont données dans le tableau
+suivant.
+
+| Addition | `x + y` |
+| Soustraction | `x - y` |
+| Multiplication | `x * y` |
+| Division | `x / y`|
+| Opérateur puissance | `x^2` |
+| Racine carrée | `sqrt(x)` |
+| Exponentielle en base 10 | `10^x` |
+| Exponentielle en base `e` | `exp(x)` |
+| Logarithme en base 10 | `log10(x)` |
+| Logarithme naturel | `log(x)` |
+| Arrondi | `round(x)` |
+
+On peut créer une nouvelle colonne reprenant la population exprimée en million:
+
+```{r}
+gapminder$pop6 <- with(gapminder, pop / 10^6)
+gapminder <- transform(gapminder, pop6 = pop / 10^6)
+library(dplyr)
+gapminder <- mutate(gapminder,
+                    pop6 = pop / 10^6,
+                    pop3 = pop6 * 1000)
+population <- transmute(gapminder, pop6 = pop / 10^6)
+```
+
+## Renommer les variables
+
+both row and column names are stored in attributes, essentially
+character vectors, within the data frame. In essence, they are just another
+form of variable that you can manipulate.
+
+```{r}
+names(gapminder)
+```
+
+
+Les lignes peuvent être référencées par leur position (index) indiquée entre
+crochets: `health[lignes, colonnes]`. 
+Un index négatif permet d'exclure une ligne.
+
+```{r row-selectindex, eval=FALSE}
+summary(health[1:10, ])
+```
+
+On peut utiliser l'information d'une colonne pour sélectionner certaines lignes.
+
+```{r row-selectname, eval=FALSE}
+summary(health[health$lactation == 2, ])
+```
+
+Enfin on peut utiliser la fonction `subset`.
+
+```{r row-selectsubset, eval=FALSE}
+summary(subset(health, subset = lactation == 2))
+```
+
+Dernière manière avec `dplyr`:
+
+```{r row-selectdplyr, eval=FALSE}
+summary(filter(health, lactation == 2))
+summary(filter(health, lactation == 2, disease == "da"))
+summary(filter(health, lactation == 2 | lactation == 4, disease == "da"))
+```
+
+On peut combiner la sélection des lignes et des colonnes.
+
+```{r select, eval=FALSE}
+summary(health[1:10, 2:3])
+summary(subset(health, subset = disease == "da", select = age))
+summary(health %>% filter(disease == "da") %>% select(age))
+```
+
