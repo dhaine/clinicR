@@ -166,3 +166,11 @@ On peut supprimer les lignes dupliquées à partir de cette nouvelle information
 gapminder3 <- gapminder2[!gapminder2$dup, ]
 ```
 
+## Ordonner les données
+
+```{r order}
+gapminder <- gapminder[order(gapminder$continent, gapminder$country), ]
+gapminder <- gapminder[order(gapminder$continent, -gapminder$lifeExp), ]
+# dplyr
+gapminder <- arrange(gapminder, continent, desc(country))
+```
