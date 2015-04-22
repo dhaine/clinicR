@@ -50,48 +50,31 @@ population <- transmute(gapminder, pop6 = pop / 10^6)
 
 ## Renommer les variables
 
-both row and column names are stored in attributes, essentially
-character vectors, within the data frame. In essence, they are just another
-form of variable that you can manipulate.
+Les noms des colonnes (variables) (et aussi des observations --- lignes) sont
+des attributs du `data frame`. Ils peuvent donc être manipulés facilement.
 
-```{r}
+```{r attr}
+str(attributes(gapminder))
 names(gapminder)
 ```
 
+On peut remplacer un nom par un autre soit en utilisant le nom de la colonne
+soit en utilisant son index.
 
-Les lignes peuvent être référencées par leur position (index) indiquée entre
-crochets: `health[lignes, colonnes]`. 
-Un index négatif permet d'exclure une ligne.
-
-```{r row-selectindex, eval=FALSE}
-summary(health[1:10, ])
+```{r rename-base}
+names(gapminder[names(gapminder) == "pop3"]) <- "newPop3"
+names(gapminder[8]) <- "verynewPop3"
 ```
 
-On peut utiliser l'information d'une colonne pour sélectionner certaines lignes.
+On peut aussi utiliser la fonction `rename` des *packages* `dplyr`, `reshape` ou
+`plyr`.
 
-```{r row-selectname, eval=FALSE}
-summary(health[health$lactation == 2, ])
-```
-
-Enfin on peut utiliser la fonction `subset`.
-
-```{r row-selectsubset, eval=FALSE}
-summary(subset(health, subset = lactation == 2))
-```
-
-Dernière manière avec `dplyr`:
-
-```{r row-selectdplyr, eval=FALSE}
-summary(filter(health, lactation == 2))
-summary(filter(health, lactation == 2, disease == "da"))
-summary(filter(health, lactation == 2 | lactation == 4, disease == "da"))
-```
-
-On peut combiner la sélection des lignes et des colonnes.
-
-```{r select, eval=FALSE}
-summary(health[1:10, 2:3])
-summary(subset(health, subset = disease == "da", select = age))
-summary(health %>% filter(disease == "da") %>% select(age))
+```{r rename-hadley}
+gapminder <- dplyr::rename(gapminder, pop3 = verynewPop3)
+# install.packages("reshape")
+library(reshape)
+gapminder <- rename(gapminder, c(pop6 = "npop6", pop3 = "npop3"))
+library(plyr)
+gapminder <- rename(gapminder, replace = c("npop6" = "pop6", "npop3" = "pop3"))
 ```
 
