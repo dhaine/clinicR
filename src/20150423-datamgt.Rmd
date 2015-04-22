@@ -78,3 +78,65 @@ library(plyr)
 gapminder <- rename(gapminder, replace = c("npop6" = "pop6", "npop3" = "pop3"))
 ```
 
+## Recodage de variables
+
+### Variable continue à variable catégorique
+
+Différentes possibilités sont offertes. En utilisant un contrôle de structure
+(`if-else`):
+
+```{r recode-ifelse}
+gapminder$century <- ifelse(gapminder$year > 2000, "21st century", "20th century")
+
+gapminder$century[gapminder$year <= 2000] <- "20th century"
+gapminder$century[gapminder$year > 2000] <- "21st century"
+
+gapminder$century <- factor(gapminder$century)
+```
+
+En utilisant la fonction `cut`:
+
+```{r recode-cut}
+gapminder$decade <- cut(gapminder$year,
+                        breaks = seq(1950, 2010, 10),
+                        labels = c("50s", "60s", "70s", "80s", "90s", "00s"))
+```
+
+Par défaut l'intervalle est ouvert à gauche et fermé à droite (1950, 1960]. Pour
+faire l'inverse, utiliser l'option `right = FALSE`.
+
+En utilisant la fonction `cut2` du *package* `Hmisc`:
+
+```{r recode-cut2}
+# install.packages("Hmisc")
+library(Hmisc)
+gapminder$decade2 <- cut2(gapminder$year, seq(1950, 2010, 10))
+```
+
+Avec la fonction `recode` du *package* `car`:
+
+```{r recode-car}
+# install.packages("car")
+library(car)
+gapminder$century2 <- recode(gapminder$year, "1950:2006 = 'before'; 2007 = 'now'")
+```
+
+### Catégorique à catégorique
+
+```{r recode-cat}
+gapminder$century3[gapminder$century == "21st century"] <- "now"
+gapminder$century3[gapminder$century == "20th century"] <- "before"
+```
+
+Ou avec les fonctions `revalue` et `mapvalue` de `plyr`:
+
+```{r recode-plyr}
+gapminder$century4 <- revalue(gapminder$century,
+                              c("20th century" = "before", "21st century" = "now"))
+gapminder$continent2 <- mapvalues(gapminder$continent,
+                                  from = c("Africa", "Americas", "Asia", "Europe",
+                                           "Oceania"),
+                                  to = c("old", "new", "old", "old", "new"))
+
+str(gapminder)
+```
