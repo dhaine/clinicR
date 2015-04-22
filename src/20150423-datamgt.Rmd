@@ -140,3 +140,29 @@ gapminder$continent2 <- mapvalues(gapminder$continent,
 
 str(gapminder)
 ```
+
+## Doublons
+
+```{r dup-create}
+gapminder2 <- rbind(gapminder, gapminder[1:2, ])
+```
+
+La fonction `unique` permet de retirer les lignes qui sont dupliquées.
+
+```{r unique}
+nodup <- unique(gapminder2)
+```
+
+On peut créer une variable qui indique quelles lignes sont dupliquées. La valeur
+`TRUE` indique les lignes dupliquées.
+
+```{r duplicated}
+gapminder2$dup <- duplicated(gapminder2)
+```
+
+On peut supprimer les lignes dupliquées à partir de cette nouvelle information:
+
+```{r noduplicated}
+gapminder3 <- gapminder2[!gapminder2$dup, ]
+```
+
