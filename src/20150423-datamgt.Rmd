@@ -1,0 +1,176 @@
+---
+layout: lesson
+root: ..
+---
+
+```{r, include = FALSE}
+source("chunk_options.R")
+```
+
+# Gestion de données dans R (II) - Opérations sur les variables et observations
+
+## Transformation de variables
+
+Contrairement à d'autres logiciels statistiques, `R` peut transformer des
+données et les analyser en même temps.
+
+```{r import-health}
+library(gapminder)
+str(gapminder)
+head(gapminder)
+summary(gapminder$pop / 10^6)
+```
+
+Les différentes opérations disponibles dans `R` sont données dans le tableau
+suivant.
+
+| Addition | `x + y` |
+| Soustraction | `x - y` |
+| Multiplication | `x * y` |
+| Division | `x / y`|
+| Opérateur puissance | `x^2` |
+| Racine carrée | `sqrt(x)` |
+| Exponentielle en base 10 | `10^x` |
+| Exponentielle en base `e` | `exp(x)` |
+| Logarithme en base 10 | `log10(x)` |
+| Logarithme naturel | `log(x)` |
+| Arrondi | `round(x)` |
+
+On peut créer une nouvelle colonne reprenant la population exprimée en million:
+
+```{r}
+gapminder$pop6 <- with(gapminder, pop / 10^6)
+gapminder <- transform(gapminder, pop6 = pop / 10^6)
+library(dplyr)
+gapminder <- mutate(gapminder,
+                    pop6 = pop / 10^6,
+                    pop3 = pop6 * 1000)
+population <- transmute(gapminder, pop6 = pop / 10^6)
+```
+
+## Renommer les variables
+
+Les noms des colonnes (variables) (et aussi des observations --- lignes) sont
+des attributs du `data frame`. Ils peuvent donc être manipulés facilement.
+
+```{r attr}
+str(attributes(gapminder))
+names(gapminder)
+```
+
+On peut remplacer un nom par un autre soit en utilisant le nom de la colonne
+soit en utilisant son index.
+
+```{r rename-base}
+names(gapminder[names(gapminder) == "pop3"]) <- "newPop3"
+names(gapminder[8]) <- "verynewPop3"
+```
+
+On peut aussi utiliser la fonction `rename` des *packages* `dplyr`, `reshape` ou
+`plyr`.
+
+```{r rename-hadley}
+gapminder <- dplyr::rename(gapminder, pop3 = verynewPop3)
+# install.packages("reshape")
+library(reshape)
+gapminder <- rename(gapminder, c(pop6 = "npop6", pop3 = "npop3"))
+library(plyr)
+gapminder <- rename(gapminder, replace = c("npop6" = "pop6", "npop3" = "pop3"))
+```
+
+## Recodage de variables
+
+### Variable continue à variable catégorique
+
+Différentes possibilités sont offertes. En utilisant un contrôle de structure
+(`if-else`):
+
+```{r recode-ifelse}
+gapminder$century <- ifelse(gapminder$year > 2000, "21st century", "20th century")
+
+gapminder$century[gapminder$year <= 2000] <- "20th century"
+gapminder$century[gapminder$year > 2000] <- "21st century"
+
+gapminder$century <- factor(gapminder$century)
+```
+
+En utilisant la fonction `cut`:
+
+```{r recode-cut}
+gapminder$decade <- cut(gapminder$year,
+                        breaks = seq(1950, 2010, 10),
+                        labels = c("50s", "60s", "70s", "80s", "90s", "00s"))
+```
+
+Par défaut l'intervalle est ouvert à gauche et fermé à droite (1950, 1960]. Pour
+faire l'inverse, utiliser l'option `right = FALSE`.
+
+En utilisant la fonction `cut2` du *package* `Hmisc`:
+
+```{r recode-cut2}
+# install.packages("Hmisc")
+library(Hmisc)
+gapminder$decade2 <- cut2(gapminder$year, seq(1950, 2010, 10))
+```
+
+Avec la fonction `recode` du *package* `car`:
+
+```{r recode-car}
+# install.packages("car")
+library(car)
+gapminder$century2 <- recode(gapminder$year, "1950:2006 = 'before'; 2007 = 'now'")
+```
+
+### Catégorique à catégorique
+
+```{r recode-cat}
+gapminder$century3[gapminder$century == "21st century"] <- "now"
+gapminder$century3[gapminder$century == "20th century"] <- "before"
+```
+
+Ou avec les fonctions `revalue` et `mapvalue` de `plyr`:
+
+```{r recode-plyr}
+gapminder$century4 <- revalue(gapminder$century,
+                              c("20th century" = "before", "21st century" = "now"))
+gapminder$continent2 <- mapvalues(gapminder$continent,
+                                  from = c("Africa", "Americas", "Asia", "Europe",
+                                           "Oceania"),
+                                  to = c("old", "new", "old", "old", "new"))
+
+str(gapminder)
+```
+
+## Doublons
+
+```{r dup-create}
+gapminder2 <- rbind(gapminder, gapminder[1:2, ])
+```
+
+La fonction `unique` permet de retirer les lignes qui sont dupliquées.
+
+```{r unique}
+nodup <- unique(gapminder2)
+```
+
+On peut créer une variable qui indique quelles lignes sont dupliquées. La valeur
+`TRUE` indique les lignes dupliquées.
+
+```{r duplicated}
+gapminder2$dup <- duplicated(gapminder2)
+```
+
+On peut supprimer les lignes dupliquées à partir de cette nouvelle information:
+
+```{r noduplicated}
+gapminder3 <- gapminder2[!gapminder2$dup, ]
+```
+
+## Ordonner les données
+
+```{r order}
+gapminder <- gapminder[order(gapminder$continent, gapminder$country), ]
+gapminder <- gapminder[order(gapminder$continent, -gapminder$lifeExp), ]
+# dplyr
+gapminder <- arrange(gapminder, continent, desc(country))
+```
