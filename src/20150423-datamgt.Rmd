@@ -62,15 +62,15 @@ On peut remplacer un nom par un autre soit en utilisant le nom de la colonne
 soit en utilisant son index.
 
 ```{r rename-base}
-names(gapminder[names(gapminder) == "pop3"]) <- "newPop3"
-names(gapminder[8]) <- "verynewPop3"
+names(gapminder)[names(gapminder) == "pop3"] <- "newPop3"
+names(gapminder)[8] <- "verynewPop3"
 ```
 
 On peut aussi utiliser la fonction `rename` des *packages* `dplyr`, `reshape` ou
 `plyr`.
 
 ```{r rename-hadley}
-gapminder <- dplyr::rename(gapminder, pop3 = verynewPop3)
+gapminder <- rename(gapminder, pop3 = verynewPop3)
 # install.packages("reshape")
 library(reshape)
 gapminder <- rename(gapminder, c(pop6 = "npop6", pop3 = "npop3"))
