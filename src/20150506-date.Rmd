@@ -1,0 +1,147 @@
+---
+layout: lesson
+root: ..
+---
+
+```{r, include = FALSE}
+source("chunk_options.R")
+```
+
+# Travailler avec des dates dans R
+
+## Classes pour dates et temps
+
+Il existe 3 classes de date/temps dans R: `Date`, `POSIXct` et `POSIXlt`.
+
+### Date
+
+`Date` est la classe la plus simple, utilisée quand on n'a qu'une date et pas de
+temps.
+Pour rappel, les langages de programmation utilisent une date "origine" pour
+indexer les dates.
+L'origine est le 1970-01-01, qui est le jour zéro (et non 1).
+Attention qu'Excel place la date origine au 1900-01-01 (qui est le jour 1 et non
+0) (sous Windows; sous Mac Excel débute le 1904-01-01...).
+De plus Excel compte un jour en trop: le 29 février 1900 qui n'existe pas.
+
+```{r date}
+# create a date
+dt1 <- as.Date("2015-05-06")
+dt1
+
+# format
+dt2 <- as.Date("10/05/2015", format = "%m/%d/%Y")
+dt2
+
+# Excel data
+as.Date(42128, origin = "1900-01-01")
+
+# difference between dates
+dt2 - dt1
+difftime(dt2, dt1, units = "weeks")
+
+dt1 + 10
+
+vector.dt <- as.Date(c("2015-05-06", "2015-05-16", "2015-05-26"))
+vector.dt
+diff(vector.dt)
+
+seq(dt1, length = 4, by = "week")
+
+# internal integer representation
+unclass(dt1)
+```
+
+### POSIXt
+
+Il y a deux types POSIXt: POSIXct et POSIXlt.
+`ct` veut dire "calendar time" (enregistrant les secondes depuis l'origine) et
+`lt` "local time" (enregistrant la date selon une liste d'attributs).
+
+
+```{r posix}
+dtx1 <- as.POSIXct("2015-05-06 14:30:45")
+dtx1
+
+dtx2 <- as.POSIXct("06052015 14:30:45", format = "%d%m%Y %H:%M:%S")
+dtx2
+
+# time zone:
+dtx3 <- as.POSIXct("2015-05-06 14:30:45", tz = "GMT")
+dtx3
+
+dtx4 <- as.POSIXlt("2015-05-06 14:30:45")
+dtx4
+unclass(dtx4)
+```
+
+> **Truc:** Noter le format de date utilisé jusqu'à présent. Pour plus d'infos,
+> cf. `?strftime`.
+
+> **Truc:** Il faut utiliser `Date` ou `POSIXct` dans un `data frame`.
+
+## Manipulation de dates avec `lubridate`
+
+"Makes working with dates fun instead of frustrating".
+
+```{r lubridate}
+library(lubridate)
+dtl1 <- ymd_hms("2015-05-06 14:30:45")
+dtl1
+
+dtl2 <- dtl1 + days(5)
+dtl2
+
+month(dtl1)
+```
+
+Lubridate considère 4 types d'objets: `instants`, `intervals`, `durations` et
+`periods`.
+
+### Instant
+
+Un `instant` est un moment spécifique dans le temps.
+
+```{r instant}
+now()
+
+# last day of the month
+ceiling_date(now(), unit = "month") - days(1)
+
+# morning?
+am(now())
+
+# instant in different time zone
+with_tz(now(), "Europe/Paris")
+```
+
+### Intervals, durations, periods
+
+Un `interval` est le temps entre deux instants.
+Une `duration` est le temps écoulé exactement, mesuré en secondes.
+C'est le temps absolu entre  deux évènements.
+Une `period` est le temps relatif entre deux évènements.
+
+```{r interval}
+# interval
+int1 <- as.interval(dtl1, dtl2)
+int1
+int1/ddays(1)
+
+ymd("2015-06-01") %within% int1
+
+# duration
+five.m <- dminutes(5)
+five.m
+
+# period
+two.w <- weeks(2)
+two.w
+```
+
+Autre package: `chron`.
+
+---
+**Information additionnelle**
+
+[lubridate](http://www.jstatsoft.org/v40/i03/paper)
