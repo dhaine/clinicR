@@ -1,0 +1,193 @@
+#+TITLE: Analyse des biais dans les études observationnelles avec episensr
+#+AUTHOR: Denis Haine
+#+EMAIL: denis.haine@gmail.com
+#+DATE: 21 janvier 2016
+
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  fr
+#+OPTIONS: toc:nil
+
+#+BEAMER_FRAME_LEVEL: 2
+#+BABEL: :session *R*
+
+#+startup: beamer
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [presentation, french]
+#+BEAMER_THEME: Madrid
+# beamer: \beamerdefaultoverlayspecification{<+->}
+
+
+
+* Causalité
+#+begin_src ditaa :file rct.png :cmdline -r
++--------------+    +-------------------+    +--------------+
+|cBLU	       |    |cBLU	        |    |cBLU          |
+|Essai clinique|--->|Échangeabilité     |--->|Interprétation|
+|randomisé     |    |exposés/non-exposés|    |causale       |
++--------------+    +-------------------+    +--------------+
+#+end_src
+
++ Pas de perdu de vue
++ Observance totale
++ Maintien de l'aveugle
+
+#+begin_src ditaa :file obs.png :cmdline -r
++------------------+    +-------------------+    +--------------+
+|cBLU		   |    |cBLU               |    |cBLU	        |
+|Données           |--->|Hétérogénéité      |    |Interprétation|
+|observationnelles |    |exposés/non-exposés|    |causale       |
++------------------+    +-------------------+    +--------------+
+#+end_src
+
++ Causalité et contrefactualité
+
+* Sources des biais
+#+begin_src ditaa :file bias.png :cmdline -r
++-------------+   +------------------+   +-----------+   +---------+
+|cBLU         |   |cBLU              |   |cBLU       |   |cBLU     |
+|Vrai relation|-->|Valeurs réelles   |-->|Échantillon|-->|Données  |
+|causale      | ^ |dans la population| ^ |observé    | ^ |observées|
++-------------+ | +------------------+ | +-----------+ | +---------+
+		| 		       |	       |
+            Confusion	             Erreur	Erreur de mesure
+		     		     d'échantillonnage
+		     		     aléatoire
+				       +
+				     Biais de sélection
+#+end_src
+
+* Erreur aléatoire
+
+#+begin_src R :exports results :results graphics :file rdmError.pdf :width 8 :height 6 :session
+n <- 1000
+mu <- 3
+sigma <- 2
+Beta <- seq(-4, 4, length = n) * sigma + mu
+y <- dnorm(Beta, mean = mu, sd = sigma)
+plot(Beta, y, type = "l", lwd = 2, xlim = c(-2, 8))
+abline(h = 0, col = "gray")
+error <- qnorm(0.975) * sigma
+i <- Beta >= mu-error & Beta <= mu+error
+Beta0 <- Beta[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+Beta0 <- c(Beta0[1], Beta0, Beta0[length(Beta0)])
+y0 <- y[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+y0 <- c(0, y0, 0)
+polygon(x = Beta0, y = y0, col = "gray") 
+abline(v = 0, col = "blue")
+abline(v = mu, col = "red", lty = 5)
+text(-1, 0.19, pos = 3, "null", col = "blue")
+text(4, 0.19, pos = 3, expression(beta), col = "red")
+arrows(5, 0.025, 7, 0.05, code = 1, length = 0.125)
+text(7, 0.05, pos = 3, "Erreur aléatoire\nIC 95%")
+#+end_src
+
+* Erreur aléatoire et taille échantillon
+
+#+begin_src R :exports results :results graphics :file rdmError2.pdf :width 8 :height 6 :session
+sigma <- 0.5
+Beta <- seq(-4, 4, length = n) * sigma + mu
+y <- dnorm(Beta, mean = mu, sd = sigma)
+plot(Beta, y, type = "l", lwd = 2, xlim = c(-2, 8))
+abline(h = 0, col = "gray")
+error <- qnorm(0.975) * sigma
+i <- Beta >= mu-error & Beta <= mu+error
+Beta0 <- Beta[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+Beta0 <- c(Beta0[1], Beta0, Beta0[length(Beta0)])
+y0 <- y[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+y0 <- c(0, y0, 0)
+polygon(x = Beta0, y = y0, col = "gray")
+abline(v = 0, col = "blue")
+abline(v = mu, col = "red", lty = 5)
+text(-1, 0.77, pos = 3, "null", col = "blue")
+text(4, 0.77, pos = 3, expression(beta), col = "red")
+arrows(3.5, 0.1, 5, 0.2, code = 1, length = 0.125)
+text(5, 0.2, pos = 3, "Erreur aléatoire\nIC 95%")
+#+end_src
+
+* Erreur systématique
+
+#+begin_src R :exports results :results graphics :file systError.pdf :width 8 :height 6 :session
+sigma <- 2
+Beta <- seq(-4, 4, length = n) * sigma + mu
+y <- dnorm(Beta, mean = mu, sd = sigma)
+plot(Beta, y, type = "l", lwd = 2, xlim = c(-2, 8))
+abline(h = 0, col = "gray")
+error <- qnorm(0.975) * sigma
+i <- Beta >= mu-error & Beta <= mu+error
+Beta0 <- Beta[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+Beta0 <- c(Beta0[1], Beta0, Beta0[length(Beta0)])
+y0 <- y[Beta < (mu + error) & Beta > (mu - error)]  # define region to fill
+y0 <- c(0, y0, 0)
+polygon(x = Beta0, y = y0, col = "gray") 
+abline(v = 0, col = "blue")
+abline(v = mu, col = "red", lty = 5)
+abline(v = 1, col = "orange", lty = 4)
+text(-1, 0.19, pos = 3, "null", col = "blue")
+text(4, 0.19, pos = 3, expression(beta), col = "red")
+text(0.75, 0.17, pos = 3, "valeur\nréelle", col = "orange")
+arrows(1, 0.1, mu, 0.1, code = 3, length = 0.125)
+arrows((mu+1)/2, 0.1, 5.5, 0.15, code = 1, length = 0.1)
+text(5.5, 0.15, pos = 3, "Erreur systématique\n(biais)")
+#+end_src
+
+* Erreur systématique
++ Facteurs de confusion
++ Biais de sélection
++ Biais d'information ("misclassification") \vspace{2em}
+
++ Réduire l'erreur systématique:
+  + modèle d'étude
+  + analyse
+  + ajustement post-hoc
+
+* Alors que faisons-nous?
++ On analyse nos données en déclarant que:
+  + pas de variable confusionnelle non mesurée
+  + la sélection est aléatoire, comme les valeurs manquantes
+  + pas d'erreur de mesure
++ Puis peut-être que les suppositions faites ne sont pas respectées et blah blah
+  blah ce qui permet d'ajouter des paragraphes à la discussion de l'article
+
+* Que pourrions-nous faire?
++ Ignorer les biais en espérant qu'ils s'annulent
++ Faire remarquer qu'il y a peut-être des biais dans notre étude
++ Discuter qualitativement des effets de ces biais
++ Analyser quantitativement l'effet de ces biais \vspace{2em}
+  + Jurek et al. (2006) Eur J Epidemiol
+
+* Mettons la table
+|         | Exposition à X | Non-exposition | Total |
+|---------+----------------+----------------+-------|
+| Cas     | a_1            | a_0            | m_1   |
+| Non-cas | b_1            | b_0            | m_0   |
+|---------+----------------+----------------+-------|
+
+| Cas-contrôle | OR |
+| Cohorte      | RR |
+
+* Erreur de classement de l'exposition
++ Sensibilité (Se): :: probabilité que l'exposé soit réellement classé comme
+     exposé
++ Spécificité (Sp): :: probabilité que le non-exposé soit réellement classé comme
+     tel
+\vspace{2em}
++ \(RR_c = RR_0/K\) où \(K\) est fonction de Se et Sp
+
+* Biais de sélection
++ \(RR_c = RR_0/K\) où \(K\) représente les probabilités de sélectionner des cas
+  et non-cas parmi les exposés et non-exposés
+
+* Biais dû à une variable de confusion non mesurée (ou non contrôlée)
++ \(RR_c = RR_0/K\) où \(K\) est fonction de
+  + la prévalence du facteur de confusion parmi les exposés
+  + la prévalence du facteur de confusion parmi les non-exposés
+  + le risque relatif entre le facteur de confusion et l'outcome
+
+* Info
++ [[https://cran.r-project.org/web/packages/episensr/index.html]]
++ [[https://github.com/dhaine/episensr]]
+#+begin_src R :results none :exports code :eval no
+install.packages('episensr')
+devtools::install_github('dhaine/episensr', ref = "develop")
+#+end_src
